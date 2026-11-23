@@ -2,7 +2,7 @@
 #include "Core.h"
 #include "Shader.h"
 
-class PSO
+class PSO //pipeline state object - holds almost every setting the gpu needs to draw
 {
 public:
     ID3D12PipelineState* pso = nullptr;

@@ -1,4 +1,4 @@
-#include "Core.h"
+#include "Graphics/Core.h"
 
 void Core::init(HWND hwnd, int _width, int _height)
 {
@@ -100,13 +100,13 @@ void Core::createSwapchain(IDXGIFactory6* factory, HWND hwnd)
     scDesc.Height = height;
     scDesc.SampleDesc.Count = 1;   // MSAA here
     scDesc.SampleDesc.Quality = 0;
-    scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // not on the slide, but you want it
+    scDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; //the back buffers will be drawn into, so they need to be render targets
     scDesc.BufferCount = BUFFER_COUNT;
     scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
     IDXGISwapChain1* swapChain1 = nullptr;
     factory->CreateSwapChainForHwnd(graphicsQueue, hwnd, &scDesc, NULL, NULL, &swapChain1);
-    swapChain1->QueryInterface(IID_PPV_ARGS(&swapchain));   // upgrade 1 -> 3
+    swapChain1->QueryInterface(IID_PPV_ARGS(&swapchain)); //upgrade 1 -> 3
     swapChain1->Release();
 }
 
@@ -204,8 +204,17 @@ void Core::createDepthBuffer()
 
 void Core::createRootSignature()
 {
+    //one parameter: 16 floats (a 4x4 matrix) sent straight from the command list
+    D3D12_ROOT_PARAMETER param = {};
+    param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
+    param.Constants.ShaderRegister = 0; //register(b0) in HLSL
+    param.Constants.RegisterSpace = 0;
+    param.Constants.Num32BitValues = 16; //4x4 floats
+    param.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
     D3D12_ROOT_SIGNATURE_DESC desc = {};
-    desc.NumParameters = 0;          // no constant buffers / textures yet
+    desc.NumParameters = 1;
+    desc.pParameters = &param;
     desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
     ID3DBlob* serialized = nullptr;
@@ -242,7 +251,7 @@ void Core::runCommandList()
 
 //every frame
 
-void Core::beginFrame()
+void Core::beginFrame(Color clearColor)
 {
     //the cpu is typically one frame ahead of the gpu
     //which back buffer am i drawing into?
@@ -268,8 +277,7 @@ void Core::beginFrame()
 
     //clear both 
     //this wipes last frames picture and sets depth to 1.0
-    //your draw calls go here
-    float color[4] = { 0.0f, 0.0f, 1.0f, 1.0f }; //blue
+    float color[4] = { clearColor.r, clearColor.g, clearColor.b, clearColor.a }; 
     getCommandList()->ClearRenderTargetView(rtvHandle, color, 0, NULL);
     getCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, NULL);
 }

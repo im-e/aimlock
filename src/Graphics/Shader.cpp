@@ -1,10 +1,10 @@
-#include "Shader.h"
+#include "Graphics/Shader.h"
 
 ID3DBlob* Shader::compile(const std::wstring& filename, const char* entryPoint, const char* target)
 {
     UINT flags = 0;
 #ifdef _DEBUG
-    flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;  // readable in PIX/RenderDoc
+    flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;  //for renderdoc
 #endif
 
     ID3DBlob* code = nullptr;
@@ -14,7 +14,7 @@ ID3DBlob* Shader::compile(const std::wstring& filename, const char* entryPoint, 
 
     if (errors)
     {
-        OutputDebugStringA((char*)errors->GetBufferPointer());  // compiler messages -> Output window
+        OutputDebugStringA((char*)errors->GetBufferPointer());  //compiler messages -> Output window
         errors->Release();
     }
     if (FAILED(hr))
@@ -27,6 +27,7 @@ ID3DBlob* Shader::compile(const std::wstring& filename, const char* entryPoint, 
 
 bool Shader::load(const std::wstring& filename)
 {
+    //           filename entrypoint shader target
     vs = compile(filename, "VSMain", "vs_5_1");
     ps = compile(filename, "PSMain", "ps_5_1");
     return vs && ps;

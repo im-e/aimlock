@@ -14,10 +14,11 @@ public:
 	int window_x;
 	int window_y;
 
-	bool keys[256];
+	bool keys[256] = {};
 	int mousex = 0;
 	int mousey = 0;
-	bool mouseButtons[3];
+	bool mouseButtons[3] = {};
+	bool shouldClose = false;
 
 	HWND hwnd;
 	HINSTANCE hinstance;

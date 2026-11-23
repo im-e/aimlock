@@ -5,8 +5,8 @@
 class Shader
 {
 public:
-    ID3DBlob* vs = nullptr;   //compiled vertex shader bytecode
-    ID3DBlob* ps = nullptr;   //compiled pixel shader bytecode
+    ID3DBlob* vs = nullptr; //compiled vertex shader
+    ID3DBlob* ps = nullptr; //compiled pixel shader
 
     bool load(const std::wstring& filename);
 

@@ -1,4 +1,10 @@
-//what the vertex shader receives (one vertex, read using your input layout)
+//declares a block of values that C++ sends to the shader
+cbuffer PerObject : register(b0) //register b0 - b0 is the slot it arrives in defined by the shader register
+{
+    row_major float4x4 WVP; //matrix called WVP
+};
+
+//what the vertex shader receives
 struct VSInput
 {
     float3 position : POSITION;
@@ -16,7 +22,7 @@ struct PSInput
 PSInput VSMain(VSInput input)
 {
     PSInput output;
-    output.position = float4(input.position, 1.0f);
+    output.position = mul(WVP, float4(input.position, 1.0f));
     output.colour = input.colour;
     return output;
 }

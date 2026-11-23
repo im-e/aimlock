@@ -4,6 +4,7 @@
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include <vector>
+#include "Maths/Color.h"
 
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
@@ -67,7 +68,7 @@ public:
     IDXGISwapChain3* swapchain = nullptr;
     ID3D12RootSignature* rootSignature = nullptr;
 
-    //one allocator + list per frame in flight
+    //allocator and command list
     ID3D12CommandAllocator* graphicsCommandAllocator[BUFFER_COUNT] = {};
     ID3D12GraphicsCommandList4* graphicsCommandList[BUFFER_COUNT] = {};
 
@@ -93,7 +94,7 @@ public:
     ID3D12GraphicsCommandList4* getCommandList();
     void runCommandList();
 
-    void beginFrame();
+    void beginFrame(Color clearColor);
     void finishFrame();
     void flushGraphicsQueue();
 

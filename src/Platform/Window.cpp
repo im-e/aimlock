@@ -40,13 +40,11 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 		case WM_DESTROY:
 		{
 			PostQuitMessage(0);
-			exit(0);
 			return 0;
 		}
 		case WM_CLOSE:
 		{
-			PostQuitMessage(0);
-			exit(0);
+			window->shouldClose = true; //ask the loop to stop for safe exit
 			return 0;
 		}
 		case WM_KEYDOWN:
