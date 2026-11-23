@@ -6,7 +6,7 @@
 
 class Window
 {
-private:
+public:
 	std::string name;
 	int width;
 	int height;
@@ -19,17 +19,12 @@ private:
 	int mousey = 0;
 	bool mouseButtons[3];
 
-
 	HWND hwnd;
 	HINSTANCE hinstance;
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	void updateMouse(int x, int y);
-
-
-public:
-
 	void create(const std::string window_name, int window_width, int window_height);
 	void processMessages();
 };
