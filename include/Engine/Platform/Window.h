@@ -14,6 +14,8 @@ public:
 	int window_x;
 	int window_y;
 
+
+
 	bool keys[256] = {};
 	int mousex = 0;
 	int mousey = 0;
@@ -25,6 +27,7 @@ public:
 
 	//fps style: while the window is active the cursor is hidden and kept inside it
 	//alt+tab away (or minimise) and it's released, click back in and it locks again
+	bool allowMouseLock = true;
 	bool mouseLocked = false;
 	void lockMouse(bool lock);
 

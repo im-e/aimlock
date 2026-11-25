@@ -5,6 +5,8 @@
 #include "Engine/Graphics/Shader.h"
 #include "Engine/Graphics/ShaderManager.h"
 #include "Engine/Graphics/PSOManager.h"
+#include "Engine/Debug/DebugUI.h"
+#include "Engine/External/imgui/imgui.h"
 #include "Game/Camera.h"
 #include "Game/GameObject.h"
 #include <vector>
@@ -24,6 +26,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	Core core;
 	core.init(win.hwnd, win.width, win.height);
+
+	DebugUI debugUI;
+	debugUI.init(&core, &win);
 
 	//shaders are compiled once (or loaded from their .cso cache) and kept by name
 	//their constant buffers are created automatically by reflection
@@ -80,12 +85,56 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	while (!win.shouldClose)
 	{
 		win.processMessages();
+
+		debugUI.beginFrame();
+		ImGui::Begin("Debug");
+		ImGui::Text("%.1f fps (%.2f ms)", ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
+
+		if (ImGui::CollapsingHeader("Lighting", ImGuiTreeNodeFlags_DefaultOpen))
+		{
+			ImGui::SliderFloat3("Direction", &lightDirection.x, -1.0f, 1.0f);
+			ImGui::ColorEdit3("Colour", &lightColour.x);
+			ImGui::SliderFloat("Ambient", &ambient, 0.0f, 1.0f);
+		}
+		if (ImGui::CollapsingHeader("Camera"))
+		{
+			ImGui::DragFloat3("Position", &camera.position.x, 0.1f);
+			ImGui::SliderFloat("Speed", &camera.moveSpeed, 1.0f, 20.0f);
+			ImGui::Checkbox("Flying", &camera.flying);
+		}
+		if (ImGui::CollapsingHeader("Objects"))
+		{
+			for (GameObject& object : objects)
+			{
+				if (ImGui::TreeNode(object.name.c_str()))
+				{
+					ImGui::DragFloat3("Position", &object.position.x, 0.1f);
+					ImGui::DragFloat3("Rotation", &object.rotation.x, 0.01f);
+					ImGui::DragFloat3("Scale", &object.scale.x, 0.001f);
+					ImGui::ColorEdit3("Colour", &object.colour.r);
+					ImGui::TreePop();
+				}
+			}
+		}
+		ImGui::End();
+
+		lightDirection = lightDirection.normalize();
+
 		if (win.keys[VK_ESCAPE]) break;
 
 		auto now = std::chrono::steady_clock::now();
 		float dt = std::chrono::duration<float>(now - lastFrame).count();
 		lastFrame = now;
 		time += dt;
+
+		//F1: toggle between playing (mouse locked) and using the debug ui (mouse free)
+		static bool f1WasDown = false;
+		if (win.keys[VK_F1] && !f1WasDown)
+		{
+			win.allowMouseLock = !win.allowMouseLock;
+			win.lockMouse(win.allowMouseLock);
+		}
+		f1WasDown = win.keys[VK_F1];
 
 		//mouse to look, WASD to walk, shift to sprint, F to fly (space/ctrl up/down)
 		camera.update(win, dt);
@@ -121,6 +170,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 			shader->apply(&core); //uploads + binds the constant buffers for this draw
 			object.mesh->draw(&core);
 		}
+		debugUI.render(&core); //render imgui
 		core.finishFrame();
 	}
 	core.flushGraphicsQueue(); //gpu must be finished before we free anything it might read
@@ -131,6 +181,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	treeMesh.release();
 	psos.release();
 	shaders.release();
+	debugUI.shutdown();
 	core.release(); //last, everything else was created from the device
 
 	return 0;

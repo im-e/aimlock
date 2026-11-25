@@ -1,5 +1,7 @@
 #include "Engine/Platform/Window.h"
 #include <cstring> //memset
+#include "Engine/External/imgui/imgui.h"
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 Window* window;
 
@@ -45,6 +47,9 @@ void Window::create(const std::string window_name, int window_width, int window_
 
 LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wParam, lParam))
+		return true;
+
 	switch (msg)
 	{
 		case WM_DESTROY:
@@ -117,7 +122,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
 				memset(window->keys, 0, sizeof(window->keys));
 				memset(window->mouseButtons, 0, sizeof(window->mouseButtons));
 			}
-			window->lockMouse(active);
+			window->lockMouse(active && window->allowMouseLock);
 			return 0;
 		}
 		case WM_SIZE:
