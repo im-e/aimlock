@@ -4,11 +4,23 @@
 #include <dxgi1_6.h>
 #include <d3dcompiler.h>
 #include <vector>
-#include "Maths/Color.h"
+#include "Engine/Maths/Color.h"
+#include "Engine/Graphics/Check.h"
 
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "d3dcompiler.lib")
+
+//release a directx object and null the pointer, safe to call twice
+template<typename T>
+void safeRelease(T*& p)
+{
+    if (p)
+    {
+        p->Release();
+        p = nullptr;
+    }
+}
 
 class GPUFence
 {
@@ -19,7 +31,7 @@ public:
 
     void create(ID3D12Device5* device)
     {
-        device->CreateFence(value, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+        CHECK(device->CreateFence(value, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence)));
         eventHandle = CreateEvent(NULL, FALSE, FALSE, NULL);
     }
     void signal(ID3D12CommandQueue* queue) { queue->Signal(fence, ++value); }
@@ -31,11 +43,16 @@ public:
             WaitForSingleObject(eventHandle, INFINITE);
         }
     }
-    ~GPUFence()
+    void release()
     {
-        CloseHandle(eventHandle);
-        fence->Release();
+        if (eventHandle)
+        {
+            CloseHandle(eventHandle);
+            eventHandle = nullptr;
+        }
+        safeRelease(fence);
     }
+    ~GPUFence() { release(); }
 };
 
 class Barrier //barriers ensure resources are in the right state
@@ -97,6 +114,10 @@ public:
     void beginFrame(Color clearColor);
     void finishFrame();
     void flushGraphicsQueue();
+    void release(); //waits for the gpu, then frees everything Core created
+
+    void uploadResource(ID3D12Resource* dstResource, const void* data, unsigned int size,
+        D3D12_RESOURCE_STATES targetState, D3D12_PLACED_SUBRESOURCE_FOOTPRINT* texFootprint = NULL);
 
 private:
     void findAdapter(IDXGIFactory6* factory);

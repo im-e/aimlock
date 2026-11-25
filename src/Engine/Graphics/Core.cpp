@@ -1,4 +1,4 @@
-#include "Graphics/Core.h"
+#include "Engine/Graphics/Core.h"
 
 void Core::init(HWND hwnd, int _width, int _height)
 {
@@ -18,12 +18,12 @@ void Core::init(HWND hwnd, int _width, int _height)
     //dxgi is the part of windows that knows about graphics and displays
     //factory is the way in, needed for listing the gpus and creating the swapchain
     IDXGIFactory6* factory = nullptr;
-    CreateDXGIFactory2(0, IID_PPV_ARGS(&factory));
+    CHECK(CreateDXGIFactory2(0, IID_PPV_ARGS(&factory)));
 
     findAdapter(factory); //pick a gpu 
 
     //create the device
-    D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device));
+    CHECK(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_1, IID_PPV_ARGS(&device)));
     //pretty much everything is created through the device from here
 
     createQueues(); //create command queues
@@ -79,13 +79,13 @@ void Core::createQueues()
     D3D12_COMMAND_QUEUE_DESC desc = {};
     //direct (graphics) drawing
     desc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-    device->CreateCommandQueue(&desc, IID_PPV_ARGS(&graphicsQueue));
+    CHECK(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&graphicsQueue)));
     //copy for uploading textures or meshes in the background
     desc.Type = D3D12_COMMAND_LIST_TYPE_COPY;
-    device->CreateCommandQueue(&desc, IID_PPV_ARGS(&copyQueue));
+    CHECK(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&copyQueue)));
     //compute shaders
     desc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
-    device->CreateCommandQueue(&desc, IID_PPV_ARGS(&computeQueue));
+    CHECK(device->CreateCommandQueue(&desc, IID_PPV_ARGS(&computeQueue)));
 }
 
 void Core::createSwapchain(IDXGIFactory6* factory, HWND hwnd)
@@ -105,8 +105,8 @@ void Core::createSwapchain(IDXGIFactory6* factory, HWND hwnd)
     scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 
     IDXGISwapChain1* swapChain1 = nullptr;
-    factory->CreateSwapChainForHwnd(graphicsQueue, hwnd, &scDesc, NULL, NULL, &swapChain1);
-    swapChain1->QueryInterface(IID_PPV_ARGS(&swapchain)); //upgrade 1 -> 3
+    CHECK(factory->CreateSwapChainForHwnd(graphicsQueue, hwnd, &scDesc, NULL, NULL, &swapChain1));
+    CHECK(swapChain1->QueryInterface(IID_PPV_ARGS(&swapchain))); //upgrade 1 -> 3
     swapChain1->Release();
 }
 
@@ -116,10 +116,10 @@ void Core::createCommandLists()
     //the allocator is the memory those instructions are written to
     for (int i = 0; i < BUFFER_COUNT; i++)
     {
-        device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-            IID_PPV_ARGS(&graphicsCommandAllocator[i]));
-        device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-            D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(&graphicsCommandList[i]));
+        CHECK(device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+            IID_PPV_ARGS(&graphicsCommandAllocator[i])));
+        CHECK(device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+            D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(&graphicsCommandList[i])));
     }
 
     //while the gpu is reading frame n's commands, you want to be writing frame n+1's
@@ -135,7 +135,7 @@ void Core::createBackbufferViews()
     D3D12_DESCRIPTOR_HEAP_DESC heapDesc = {};
     heapDesc.NumDescriptors = BUFFER_COUNT;
     heapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
-    device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&backbufferHeap));
+    CHECK(device->CreateDescriptorHeap(&heapDesc, IID_PPV_ARGS(&backbufferHeap)));
 
     D3D12_CPU_DESCRIPTOR_HANDLE handle = backbufferHeap->GetCPUDescriptorHandleForHeapStart();
     UINT rtvSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -143,7 +143,7 @@ void Core::createBackbufferViews()
     //one slot. you ask the device for the slot size because it differs between GPUs
     for (int i = 0; i < BUFFER_COUNT; i++)
     {
-        swapchain->GetBuffer(i, IID_PPV_ARGS(&backbuffers[i]));
+        CHECK(swapchain->GetBuffer(i, IID_PPV_ARGS(&backbuffers[i])));
         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
         rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; //makes gpu apply gamma correction when writing
         rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
@@ -164,7 +164,7 @@ void Core::createDepthBuffer()
     dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
     dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     //a heap with one DSV slot
-    device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap));
+    CHECK(device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&dsvHeap)));
     dsvHandle = dsvHeap->GetCPUDescriptorHandleForHeapStart();
 
     D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilDesc = {};
@@ -196,35 +196,102 @@ void Core::createDepthBuffer()
     dsvDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
 
     //this is the easy allocation from the slides, it makes a texture and heap for it in one call
-    device->CreateCommittedResource(&heapprops, D3D12_HEAP_FLAG_NONE, &dsvDesc,
-        D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&dsv));
+    CHECK(device->CreateCommittedResource(&heapprops, D3D12_HEAP_FLAG_NONE, &dsvDesc,
+        D3D12_RESOURCE_STATE_DEPTH_WRITE, &depthClearValue, IID_PPV_ARGS(&dsv)));
     //write a view for it
     device->CreateDepthStencilView(dsv, &depthStencilDesc, dsvHandle);
 }
 
 void Core::createRootSignature()
 {
-    //one parameter: 16 floats (a 4x4 matrix) sent straight from the command list
-    D3D12_ROOT_PARAMETER param = {};
-    param.ParameterType = D3D12_ROOT_PARAMETER_TYPE_32BIT_CONSTANTS;
-    param.Constants.ShaderRegister = 0; //register(b0) in HLSL
-    param.Constants.RegisterSpace = 0;
-    param.Constants.Num32BitValues = 16; //4x4 floats
-    param.ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+    //root parameters are the 'slots' the shaders read from
+    //index 0: vertex shader constant buffer, index 1: pixel shader constant buffer
+    D3D12_ROOT_PARAMETER params[2] = {};
+
+    params[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    params[0].Descriptor.ShaderRegister = 0; //register(b0)
+    params[0].Descriptor.RegisterSpace = 0;
+    params[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;
+
+    params[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;
+    params[1].Descriptor.ShaderRegister = 1; //register(b1)
+    params[1].Descriptor.RegisterSpace = 0;
+    params[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;
 
     D3D12_ROOT_SIGNATURE_DESC desc = {};
-    desc.NumParameters = 1;
-    desc.pParameters = &param;
+    desc.NumParameters = _countof(params);
+    desc.pParameters = params;
     desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
     ID3DBlob* serialized = nullptr;
     ID3DBlob* errors = nullptr;
-    D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &serialized, &errors);
-    device->CreateRootSignature(0, serialized->GetBufferPointer(),
-        serialized->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
+    HRESULT hr = D3D12SerializeRootSignature(&desc, D3D_ROOT_SIGNATURE_VERSION_1, &serialized, &errors);
+    if (errors) //print why the root signature is invalid before CHECK stops the program
+        OutputDebugStringA((char*)errors->GetBufferPointer());
+    CHECK(hr);
+    CHECK(device->CreateRootSignature(0, serialized->GetBufferPointer(),
+        serialized->GetBufferSize(), IID_PPV_ARGS(&rootSignature)));
 
     serialized->Release();
     if (errors) errors->Release();
+}
+
+void Core::uploadResource(ID3D12Resource* dstResource, const void* data, unsigned int size,
+    D3D12_RESOURCE_STATES targetState, D3D12_PLACED_SUBRESOURCE_FOOTPRINT* texFootprint)
+{
+    //make a temporary buffer in the upload heap (memory the cpu can write and the gpu can read)
+    D3D12_HEAP_PROPERTIES heapProps = {};
+    heapProps.Type = D3D12_HEAP_TYPE_UPLOAD;
+
+    D3D12_RESOURCE_DESC bufferDesc = {};
+    bufferDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+    bufferDesc.Width = size;
+    bufferDesc.Height = 1;
+    bufferDesc.DepthOrArraySize = 1;
+    bufferDesc.MipLevels = 1;
+    bufferDesc.Format = DXGI_FORMAT_UNKNOWN;
+    bufferDesc.SampleDesc.Count = 1;
+    bufferDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+    ID3D12Resource* uploadBuffer = nullptr;
+    CHECK(device->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &bufferDesc,
+        D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(&uploadBuffer)));
+
+    //copy the cpu data into it
+    void* mapped = nullptr;
+    D3D12_RANGE readRange = { 0, 0 }; //we won't read it back
+    CHECK(uploadBuffer->Map(0, &readRange, &mapped));
+    memcpy(mapped, data, size);
+    uploadBuffer->Unmap(0, nullptr);
+
+    //record a gpu copy from the upload buffer into the fast (default heap) resource
+    resetCommandList();
+    if (texFootprint != nullptr) //textures (later lecture)
+    {
+        D3D12_TEXTURE_COPY_LOCATION src = {};
+        src.pResource = uploadBuffer;
+        src.Type = D3D12_TEXTURE_COPY_TYPE_PLACED_FOOTPRINT;
+        src.PlacedFootprint = *texFootprint;
+
+        D3D12_TEXTURE_COPY_LOCATION dst = {};
+        dst.pResource = dstResource;
+        dst.Type = D3D12_TEXTURE_COPY_TYPE_SUBRESOURCE_INDEX;
+        dst.SubresourceIndex = 0;
+
+        getCommandList()->CopyTextureRegion(&dst, 0, 0, 0, &src, nullptr);
+    }
+    else //buffers (vertices, indices etc)
+    {
+        getCommandList()->CopyBufferRegion(dstResource, 0, uploadBuffer, 0, size);
+    }
+
+    //switch the resource from "being copied into" to whatever it's used for
+    Barrier::add(dstResource, D3D12_RESOURCE_STATE_COPY_DEST, targetState, getCommandList());
+
+    //submit, wait for the gpu to finish, then the upload buffer can go
+    runCommandList();
+    flushGraphicsQueue();
+    uploadBuffer->Release();
 }
 
 //command list helpers
@@ -232,8 +299,8 @@ void Core::resetCommandList()
 {
     UINT frameIndex = swapchain->GetCurrentBackBufferIndex();
     //this wipes the old commands and starts recording
-    graphicsCommandAllocator[frameIndex]->Reset();
-    graphicsCommandList[frameIndex]->Reset(graphicsCommandAllocator[frameIndex], NULL);
+    CHECK(graphicsCommandAllocator[frameIndex]->Reset());
+    CHECK(graphicsCommandList[frameIndex]->Reset(graphicsCommandAllocator[frameIndex], NULL));
 }
 
 ID3D12GraphicsCommandList4* Core::getCommandList()
@@ -244,7 +311,7 @@ ID3D12GraphicsCommandList4* Core::getCommandList()
 void Core::runCommandList()
 {
     //close means 'ive finished writing' 
-    getCommandList()->Close();
+    CHECK(getCommandList()->Close());
     ID3D12CommandList* lists[] = { getCommandList() };
     graphicsQueue->ExecuteCommandLists(1, lists); //posts iot into the GPUs inbox and now it starts working
 }
@@ -293,7 +360,7 @@ void Core::finishFrame()
     //signal the fence
     graphicsQueueFence[frameIndex].signal(graphicsQueue);
     //present
-    swapchain->Present(1, 0);
+    CHECK(swapchain->Present(1, 0));
 }
 
 void Core::flushGraphicsQueue()
@@ -302,4 +369,31 @@ void Core::flushGraphicsQueue()
     //this puts a fence at the very end of the queue and waits for it
     graphicsQueueFence[0].signal(graphicsQueue);
     graphicsQueueFence[0].wait();
+}
+
+void Core::release()
+{
+    flushGraphicsQueue(); //never free something the gpu might still be using
+
+    safeRelease(rootSignature);
+
+    safeRelease(dsv);
+    safeRelease(dsvHeap);
+    for (int i = 0; i < BUFFER_COUNT; i++)
+        safeRelease(backbuffers[i]);
+    safeRelease(backbufferHeap);
+
+    for (int i = 0; i < BUFFER_COUNT; i++)
+    {
+        safeRelease(graphicsCommandList[i]);
+        safeRelease(graphicsCommandAllocator[i]);
+        graphicsQueueFence[i].release();
+    }
+
+    safeRelease(swapchain);
+    safeRelease(computeQueue);
+    safeRelease(copyQueue);
+    safeRelease(graphicsQueue);
+    safeRelease(device); //last, everything above was made by it
+    safeRelease(adapter);
 }

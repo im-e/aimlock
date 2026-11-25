@@ -1,82 +1,123 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="include">
+      <UniqueIdentifier>{90a55937-b442-477b-b849-c4b957667ef3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="include\Engine">
+      <UniqueIdentifier>{36af5f4b-6ec2-43c7-88b4-9665a7fad95a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\maths">
-      <UniqueIdentifier>{6b1f2c3e-8a4d-4e5f-9b7c-1d2e3f4a5b6c}</UniqueIdentifier>
+    <Filter Include="include\Engine\External">
+      <UniqueIdentifier>{cf1bdf2b-4a07-4f48-97a1-5f5d1ee65e0f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\external">
-      <UniqueIdentifier>{7c2a3d4f-9b5e-4f60-8c8d-2e3f4a5b6c7d}</UniqueIdentifier>
+    <Filter Include="include\Engine\Graphics">
+      <UniqueIdentifier>{a33c6f56-0d5e-4676-a12d-da71b9f1ec29}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="include\Engine\Maths">
+      <UniqueIdentifier>{aa2cbd1b-1d82-4d60-bb9a-02c66f555180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Engine\Platform">
+      <UniqueIdentifier>{b52d3756-9d43-41bf-915f-2b013afe0746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Game">
+      <UniqueIdentifier>{63ace186-35fd-4344-886d-5bb1a29b9c8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{cf082f24-4f6a-4aa3-8ed7-9a0cdfd759d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\Shaders">
+      <UniqueIdentifier>{56daf27a-f309-4b8a-82a2-36a5a5f74cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{431ce035-8822-4ae3-aa78-39de97c5741c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine">
+      <UniqueIdentifier>{f4b05119-1aa4-409e-b502-470d07c10f2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Graphics">
+      <UniqueIdentifier>{07339364-dcc1-499e-9078-63b50dab97cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Engine\Platform">
+      <UniqueIdentifier>{ed86876d-fbd3-4d04-9b4b-9d24d9f6c9ba}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Graphics\ShaderManager.cpp">
+      <Filter>src\Engine\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="src\main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Engine\Graphics\Mesh.cpp">
+      <Filter>src\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Engine\Graphics\PSOManager.cpp">
+      <Filter>src\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Mesh.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Engine\Graphics\Shader.cpp">
+      <Filter>src\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Engine\Platform\Window.cpp">
+      <Filter>src\Engine\Platform</Filter>
     </ClCompile>
-    <ClCompile Include="src\PSO.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Engine\Graphics\Core.cpp">
+      <Filter>src\Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Window.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Game\Camera.h">
+      <Filter>include\Game</Filter>
     </ClInclude>
-    <ClInclude Include="include\Core.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Game\GameObject.h">
+      <Filter>include\Game</Filter>
     </ClInclude>
-    <ClInclude Include="include\Mesh.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Engine\Graphics\Check.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\Shader.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Engine\Graphics\ConstantBuffer.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\PSO.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="include\Engine\Graphics\Mesh.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\maths\Vec3.h">
-      <Filter>Header Files\maths</Filter>
+    <ClInclude Include="include\Engine\Graphics\PSOManager.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\maths\Vec4.h">
-      <Filter>Header Files\maths</Filter>
+    <ClInclude Include="include\Engine\Graphics\Shader.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\maths\Matrix.h">
-      <Filter>Header Files\maths</Filter>
+    <ClInclude Include="include\Engine\Graphics\ShaderManager.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\maths\MathUtils.h">
-      <Filter>Header Files\maths</Filter>
+    <ClInclude Include="include\Engine\Platform\Window.h">
+      <Filter>include\Engine\Platform</Filter>
     </ClInclude>
-    <ClInclude Include="include\maths\Color.h">
-      <Filter>Header Files\maths</Filter>
+    <ClInclude Include="include\Engine\Graphics\Core.h">
+      <Filter>include\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="include\external\GEMLoader.h">
-      <Filter>Header Files\external</Filter>
+    <ClInclude Include="include\Engine\Maths\Vec3.h">
+      <Filter>include\Engine\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Maths\Vec4.h">
+      <Filter>include\Engine\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Maths\Matrix.h">
+      <Filter>include\Engine\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Maths\MathUtils.h">
+      <Filter>include\Engine\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\Maths\Color.h">
+      <Filter>include\Engine\Maths</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Engine\External\GEMLoader.h">
+      <Filter>include\Engine\External</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="dx12-project.slnx" />
-    <None Include="shaders\triangle.hlsl" />
+    <None Include="resources\Shaders\shader.hlsl">
+      <Filter>resources\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

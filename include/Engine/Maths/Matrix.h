@@ -1,8 +1,8 @@
 #pragma once
 #include <cstring>
 #include <cmath>
-#include "Maths/Vec4.h"
-#include "Maths/Vec3.h"
+#include "Engine/Maths/Vec4.h"
+#include "Engine/Maths/Vec3.h"
 
 class Matrix {
 public:
@@ -77,7 +77,7 @@ public:
 
 	static Matrix perspective(float fovDegrees, float aspect, float nearplane, float farplane)
 	{
-		float fovRadians = fovDegrees * M_PI / 180;
+		float fovRadians = fovDegrees * (float)M_PI / 180.0f;
 		float t = tan(fovRadians / 2);
 
 		Matrix p(0);
@@ -221,7 +221,7 @@ public:
 		if (det == 0) {
 			//handle this case
 		}
-		det = 1.0 / det;
+		det = 1.0f / det;
 		for (int i = 0; i < 16; i++) {
 			inv[i] = inv[i] * det;
 		}
