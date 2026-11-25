@@ -150,7 +150,7 @@
     <ClCompile Include="include\Engine\External\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="include\Engine\External\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\Engine\External\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Engine\Debug\DebugUI.cpp" />
+    <ClCompile Include="src\Engine\ImGUI\DebugUI.cpp" />
     <ClCompile Include="src\Engine\Graphics\ShaderManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh.cpp" />
@@ -160,7 +160,7 @@
     <ClCompile Include="src\Engine\Graphics\Core.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine\Debug\DebugUI.h" />
+    <ClInclude Include="include\Engine\ImGUI\DebugUI.h" />
     <ClInclude Include="include\Engine\External\imgui\imconfig.h" />
     <ClInclude Include="include\Engine\External\imgui\imgui.h" />
     <ClInclude Include="include\Engine\External\imgui\imgui_impl_dx12.h" />

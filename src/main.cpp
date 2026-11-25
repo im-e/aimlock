@@ -5,7 +5,7 @@
 #include "Engine/Graphics/Shader.h"
 #include "Engine/Graphics/ShaderManager.h"
 #include "Engine/Graphics/PSOManager.h"
-#include "Engine/Debug/DebugUI.h"
+#include "Engine/ImGUI/DebugUI.h"
 #include "Engine/External/imgui/imgui.h"
 #include "Game/Camera.h"
 #include "Game/GameObject.h"

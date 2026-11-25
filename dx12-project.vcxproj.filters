@@ -63,6 +63,14 @@
     <ClCompile Include="src\Engine\Graphics\Core.cpp">
       <Filter>src\Engine\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="include\Engine\External\imgui\imgui.cpp" />
+    <ClCompile Include="include\Engine\External\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\Engine\External\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\Engine\External\imgui\imgui_impl_dx12.cpp" />
+    <ClCompile Include="include\Engine\External\imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="include\Engine\External\imgui\imgui_tables.cpp" />
+    <ClCompile Include="include\Engine\External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="src\Engine\ImGUI\DebugUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game\Camera.h">
@@ -113,6 +121,15 @@
     <ClInclude Include="include\Engine\External\GEMLoader.h">
       <Filter>include\Engine\External</Filter>
     </ClInclude>
+    <ClInclude Include="include\Engine\External\imgui\imconfig.h" />
+    <ClInclude Include="include\Engine\External\imgui\imgui.h" />
+    <ClInclude Include="include\Engine\External\imgui\imgui_impl_dx12.h" />
+    <ClInclude Include="include\Engine\External\imgui\imgui_impl_win32.h" />
+    <ClInclude Include="include\Engine\External\imgui\imgui_internal.h" />
+    <ClInclude Include="include\Engine\External\imgui\imstb_rectpack.h" />
+    <ClInclude Include="include\Engine\External\imgui\imstb_textedit.h" />
+    <ClInclude Include="include\Engine\External\imgui\imstb_truetype.h" />
+    <ClInclude Include="include\Engine\ImGUI\DebugUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dx12-project.slnx" />
