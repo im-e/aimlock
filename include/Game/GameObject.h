@@ -5,14 +5,12 @@
 #include "Engine/Maths/Color.h"
 #include <string>
 
-//something placed in the world: which mesh to draw, and where and how it sits
-//the mesh is only a pointer, so lots of objects can share one mesh without loading it twice
 class GameObject
 {
 public:
-    std::string name;
-    Mesh* mesh = nullptr;
-    Vec3 position = Vec3(0, 0, 0);
+    std::string name; //name of the object
+    Mesh* mesh = nullptr; //pointer to the mesh -> many objects can share the same mesh
+    Vec3 position = Vec3(0, 0, 0); //position
     Vec3 rotation = Vec3(0, 0, 0); //radians: x = tilt forward/back, y = turn left/right, z = roll
     Vec3 scale = Vec3(1, 1, 1);
     Color colour = Color(0.8f, 0.8f, 0.8f, 1.0f); //base colour, lit by the shader

@@ -22,7 +22,7 @@
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{eee7a678-25a5-4437-b26f-098069d31659}</ProjectGuid>
-    <RootNamespace>dx12project</RootNamespace>
+    <RootNamespace>aimlock</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -187,7 +187,7 @@
     <ClInclude Include="include\Engine\External\GEMLoader.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dx12-project.slnx" />
+    <None Include="aimlock.slnx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\Shaders\shader.hlsl">

@@ -132,7 +132,7 @@
     <ClInclude Include="include\Engine\ImGUI\DebugUI.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dx12-project.slnx" />
+    <None Include="aimlock.slnx" />
     <None Include="resources\Shaders\shader.hlsl">
       <Filter>resources\Shaders</Filter>
     </None>
