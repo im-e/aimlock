@@ -143,16 +143,9 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\Engine\External\imgui\imgui.cpp" />
-    <ClCompile Include="include\Engine\External\imgui\imgui_demo.cpp" />
-    <ClCompile Include="include\Engine\External\imgui\imgui_draw.cpp" />
-    <ClCompile Include="include\Engine\External\imgui\imgui_impl_dx12.cpp" />
-    <ClCompile Include="include\Engine\External\imgui\imgui_impl_win32.cpp" />
-    <ClCompile Include="include\Engine\External\imgui\imgui_tables.cpp" />
-    <ClCompile Include="include\Engine\External\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="src\Engine\ImGUI\DebugUI.cpp" />
     <ClCompile Include="src\Engine\Graphics\ShaderManager.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Game\Game.cpp" />
     <ClCompile Include="src\Engine\Graphics\Mesh.cpp" />
     <ClCompile Include="src\Engine\Graphics\PSOManager.cpp" />
     <ClCompile Include="src\Engine\Graphics\Shader.cpp" />
@@ -160,16 +153,9 @@
     <ClCompile Include="src\Engine\Graphics\Core.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Engine\ImGUI\DebugUI.h" />
-    <ClInclude Include="include\Engine\External\imgui\imconfig.h" />
-    <ClInclude Include="include\Engine\External\imgui\imgui.h" />
-    <ClInclude Include="include\Engine\External\imgui\imgui_impl_dx12.h" />
-    <ClInclude Include="include\Engine\External\imgui\imgui_impl_win32.h" />
-    <ClInclude Include="include\Engine\External\imgui\imgui_internal.h" />
-    <ClInclude Include="include\Engine\External\imgui\imstb_rectpack.h" />
-    <ClInclude Include="include\Engine\External\imgui\imstb_textedit.h" />
-    <ClInclude Include="include\Engine\External\imgui\imstb_truetype.h" />
     <ClInclude Include="include\Game\Camera.h" />
+    <ClInclude Include="include\Game\Game.h" />
+    <ClInclude Include="include\Game\GameState.h" />
     <ClInclude Include="include\Game\GameObject.h" />
     <ClInclude Include="include\Engine\Graphics\Check.h" />
     <ClInclude Include="include\Engine\Graphics\ConstantBuffer.h" />

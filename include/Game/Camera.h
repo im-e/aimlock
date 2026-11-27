@@ -1,84 +1,52 @@
 #pragma once
 #include "Engine/Maths/Vec3.h"
 #include "Engine/Maths/Matrix.h"
-#include "Engine/Maths/MathUtils.h" //PI
+#include "Engine/Maths/MathUtils.h"
 #include "Engine/Platform/Window.h"
 #include <cmath>
 
-//first person camera: the mouse turns your head, WASD walks along the ground
-//press F to toggle flying (handy for looking around the level while building it)
+//the player's view in the aim trainer
+//you never move, you just stand in one spot and turn, so all this does is mouse look
 class Camera
 {
 public:
-    Vec3 position = Vec3(0, 1.7f, -8.0f);
-    float yaw = 0.0f;   //turning left/right in radians, 0 = looking down +z
-    float pitch = 0.0f; //looking up/down in radians
+    Vec3 position = Vec3(0.0f, 1.7f, 0.0f); //eye height above the floor
+    float yaw = 0.0f;   //left/right in radians, 0 = looking down +z
+    float pitch = 0.0f; //up/down in radians
 
-    float moveSpeed = 4.0f;          //metres per second (a brisk walk)
-    float sprintMultiplier = 2.0f;   //hold shift
-    float lookSensitivity = 0.002f;  //radians per unit of mouse movement
-    float eyeHeight = 1.7f;          //how high your eyes are above the ground (y = 0) when walking
-    bool flying = false;
+    //sensitivity works the same as CS/Apex (0.022 degrees per mouse count at sens 1)
+    //so people can bring their in game sens straight over
+    float sensitivity = 5.0f;
+    float yawPerCount = 0.022f;
 
-    //the direction the camera is looking (used for the view)
+    float horizontalFov = 103.0f; //degrees, same as valorant's fixed fov
+    float nearPlane = 0.1f;
+    float farPlane = 200.0f;
+
     Vec3 forward() const
     {
         return Vec3(sinf(yaw) * cosf(pitch), sinf(pitch), cosf(yaw) * cosf(pitch));
     }
 
-    //forward but flat along the ground, so looking down doesn't make you walk slower or into the floor
-    Vec3 flatForward() const
+    void update(const Window& win)
     {
-        return Vec3(sinf(yaw), 0.0f, cosf(yaw));
+        if (!win.mouseLocked)
+            return; //cursor is free in menus, so it shouldn't turn the view
+
+        float radiansPerCount = MathUtils::toRadians(sensitivity * yawPerCount);
+        yaw += win.mouseDeltaX * radiansPerCount;
+        pitch -= win.mouseDeltaY * radiansPerCount; //mouse down = look down
+
+        //stop just short of straight up/down, lookAt breaks when forward lines up with the up vector
+        const float limit = PI / 2.0f - 0.01f;
+        if (pitch > limit) pitch = limit;
+        if (pitch < -limit) pitch = -limit;
     }
 
-    //flat right vector so strafing never moves you up or down
-    Vec3 right() const
+    void resetView()
     {
-        return Vec3(cosf(yaw), 0.0f, -sinf(yaw));
-    }
-
-    void update(const Window& win, float dt)
-    {
-        //mouse look whenever the mouse is locked into the window
-        if (win.mouseLocked)
-        {
-            yaw += win.mouseDeltaX * lookSensitivity;
-            pitch -= win.mouseDeltaY * lookSensitivity; //mouse down = look down
-
-            //stop just short of straight up/down, lookAt breaks when forward lines up with the up vector
-            const float limit = PI / 2.0f - 0.01f;
-            if (pitch > limit) pitch = limit;
-            if (pitch < -limit) pitch = -limit;
-        }
-
-        //F toggles flying - only on the frame the key goes down, not every frame it's held
-        bool flyKey = win.keys['F'];
-        if (flyKey && !flyKeyWasDown)
-            flying = !flying;
-        flyKeyWasDown = flyKey;
-
-        //add up which way the keys are pushing
-        Vec3 f = flying ? forward() : flatForward(); //when flying, W goes where you look
-        Vec3 r = right();
-        Vec3 move(0, 0, 0);
-        if (win.keys['W']) move += f;
-        if (win.keys['S']) move += -f;
-        if (win.keys['D']) move += r;
-        if (win.keys['A']) move += -r;
-        if (flying && win.keys[VK_SPACE])   move += Vec3(0, 1, 0);
-        if (flying && win.keys[VK_CONTROL]) move += Vec3(0, -1, 0);
-
-        //normalise so going diagonally (W + D) isn't faster than going straight
-        float length = sqrtf(Dot(move, move));
-        if (length > 0.0f)
-            move = move / length;
-
-        float speed = moveSpeed * (win.keys[VK_SHIFT] ? sprintMultiplier : 1.0f);
-        position += move * (speed * dt); //dt so speed doesn't depend on frame rate
-
-        if (!flying)
-            position.y = eyeHeight; //stay on the ground (proper jumping/gravity comes with physics)
+        yaw = 0.0f;
+        pitch = 0.0f;
     }
 
     Matrix getView() const
@@ -86,6 +54,11 @@ public:
         return Matrix::lookAt(position, position + forward(), Vec3(0, 1, 0));
     }
 
-private:
-    bool flyKeyWasDown = false;
+    //games quote horizontal fov, but the projection matrix wants vertical, so convert using the aspect ratio
+    Matrix getProjection(float aspect) const
+    {
+        float halfHorizontal = MathUtils::toRadians(horizontalFov) * 0.5f;
+        float verticalFov = 2.0f * atanf(tanf(halfHorizontal) / aspect);
+        return Matrix::perspective(MathUtils::toDegrees(verticalFov), aspect, nearPlane, farPlane);
+    }
 };

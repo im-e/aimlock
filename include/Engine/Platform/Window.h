@@ -14,29 +14,36 @@ public:
 	int window_x;
 	int window_y;
 
+	HWND hwnd;
+	HINSTANCE hinstance;
 
+	bool shouldClose = false;
+	bool focused = false; //false while alt+tabbed or minimised
 
-	bool keys[256] = {};
-	int mousex = 0;
+	//keyboard
+	bool keys[256] = {};        //held down right now
+	bool keysPressed[256] = {}; //only true on the frame the key went down (ignores key repeat)
+	bool keyPressed(int key) const { return keysPressed[key]; }
+
+	//mouse
+	int mousex = 0; //cursor position in client pixels, for the ui later
 	int mousey = 0;
 	bool mouseButtons[3] = {};
-	bool shouldClose = false;
-
-	int mouseDeltaX = 0; //how far the mouse moved since the last processMessages()
+	int leftClicks = 0;  //clicks since the last processMessages(), so fast clicks don't get lost between frames
+	int mouseDeltaX = 0; //raw mouse movement since the last processMessages(), used for aiming
 	int mouseDeltaY = 0;
 
-	//fps style: while the window is active the cursor is hidden and kept inside it
-	//alt+tab away (or minimise) and it's released, click back in and it locks again
+	//when locked the cursor is hidden and kept inside the window
+	//the game decides when it's allowed (menus = free cursor, playing = locked)
+	//alt+tab releases it, clicking back in locks it again if it's still allowed
 	bool allowMouseLock = true;
 	bool mouseLocked = false;
 	void lockMouse(bool lock);
 
-	HWND hwnd;
-	HINSTANCE hinstance;
-
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	void updateMouse(int x, int y);
 	void create(const std::string window_name, int window_width, int window_height);
-	void processMessages();
+	void processMessages(); //call once at the start of every frame
+	void setTitle(const std::string& title);
+	void updateMouse(int x, int y);
 };

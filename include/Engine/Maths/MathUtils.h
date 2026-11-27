@@ -1,6 +1,6 @@
 #pragma once
 #include <cmath>
-#include "Engine/Maths/Vec4.h"
+#include "Engine/Maths/Vec3.h"
 
 constexpr float PI = 3.14159265358979f;
 
@@ -12,28 +12,27 @@ public:
 	{
 		return a * (1.0f - t) + (b * t);
 	}
-	
-	template <typename T>
-	static T simpleInterpolateAttribute(T a0, T a1, T a2, float alpha, float beta, float gamma)
-	{
-		return (a0 * alpha) + (a1 * beta) + (a2 * gamma);
-	}
 
-	template <typename T>
-	static T perspectiveCorrectInterpolateAttribute(T a0, T a1, T a2, float v0_w, float v1_w, float v2_w,
-		float alpha, float beta, float gamma, float frag_w)
-	{
-		T attrib[3];
-		attrib[0] = a0 * (alpha * v0_w);
-		attrib[1] = a1 * (beta * v1_w);
-		attrib[2] = a2 * (gamma * v2_w);
-		return (attrib[0] + attrib[1] + attrib[2]) / frag_w;
-	}
+	static float toRadians(float degrees) { return degrees * PI / 180.0f; }
+	static float toDegrees(float radians) { return radians * 180.0f / PI; }
 
-	static Vec4 toScreen(Vec4 vertex, float width, float height)
+	//ray vs sphere, used for hitscan shooting
+	//dir has to be normalised. if it hits, t is how far along the ray the hit is
+	static bool raySphere(const Vec3& origin, const Vec3& dir, const Vec3& centre, float radius, float& t)
 	{
-		float screenX = ((vertex.x + 1) / 2) * width;
-		float screenY = (1 - (vertex.y + 1) / 2) * height; //flip y
-		return Vec4(screenX, screenY, vertex.z, vertex.w);
+		//solve |origin + dir * t - centre| = radius, which is a quadratic in t
+		//with dir normalised the 'a' term is 1, so this is the simplified version
+		Vec3 oc = origin - centre;
+		float b = Dot(oc, dir);
+		float c = Dot(oc, oc) - radius * radius;
+		float discriminant = b * b - c;
+		if (discriminant < 0.0f)
+			return false; //missed completely
+
+		float root = sqrtf(discriminant);
+		t = -b - root;     //nearest hit
+		if (t < 0.0f)
+			t = -b + root; //we're inside the sphere, so take the far side
+		return t >= 0.0f;
 	}
 };

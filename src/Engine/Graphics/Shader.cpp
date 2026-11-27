@@ -8,7 +8,7 @@ ID3DBlob* Shader::compile(const std::wstring& filename, const char* entryPoint, 
 {
     UINT flags = 0;
 #ifdef _DEBUG
-    flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;  //for renderdoc
+    flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION; //so renderdoc/pix can step through the hlsl
 #endif
 
     ID3DBlob* code = nullptr;

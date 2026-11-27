@@ -5,15 +5,17 @@
 #include "Engine/Maths/Color.h"
 #include <string>
 
+//something placed in the world: a mesh plus where it is and what colour it is
+//meshes are shared, so lots of objects can point at the same one
 class GameObject
 {
 public:
-    std::string name; //name of the object
-    Mesh* mesh = nullptr; //pointer to the mesh -> many objects can share the same mesh
-    Vec3 position = Vec3(0, 0, 0); //position
-    Vec3 rotation = Vec3(0, 0, 0); //radians: x = tilt forward/back, y = turn left/right, z = roll
+    std::string name;
+    Mesh* mesh = nullptr;
+    Vec3 position = Vec3(0, 0, 0);
+    Vec3 rotation = Vec3(0, 0, 0); //radians: x = pitch, y = yaw, z = roll
     Vec3 scale = Vec3(1, 1, 1);
-    Color colour = Color(0.8f, 0.8f, 0.8f, 1.0f); //base colour, lit by the shader
+    Color colour = Color(0.8f, 0.8f, 0.8f, 1.0f);
 
     GameObject() {}
     GameObject(const std::string& _name, Mesh* _mesh, Vec3 _position, Vec3 _scale = Vec3(1, 1, 1),
@@ -22,7 +24,7 @@ public:
     }
 
     //model space -> world space
-    //read right to left: scale it, then rotate it, then move it into place
+    //reads right to left: scale, then rotate, then move into place
     Matrix getWorld() const
     {
         return Matrix::translation(position)

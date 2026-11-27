@@ -19,8 +19,8 @@ void PSOManager::createPSO(Core* core, const std::string& name, ID3DBlob* vs, ID
 
     //rasterizer settings
     D3D12_RASTERIZER_DESC rasterDesc = {};
-    rasterDesc.FillMode = D3D12_FILL_MODE_SOLID; //can try wireframe
-    rasterDesc.CullMode = D3D12_CULL_MODE_BACK;  //cull from the back
+    rasterDesc.FillMode = D3D12_FILL_MODE_SOLID; //WIREFRAME is handy for debugging
+    rasterDesc.CullMode = D3D12_CULL_MODE_BACK;  //skip triangles facing away from the camera
     rasterDesc.FrontCounterClockwise = FALSE;
     rasterDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
     rasterDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;

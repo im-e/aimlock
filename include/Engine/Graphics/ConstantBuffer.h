@@ -16,7 +16,7 @@ class ConstantBuffer
 {
 public:
     std::string name; //cbuffer name in the hlsl
-    std::map<std::string, ConstantBufferVariable> constantBufferData; //variable name , offset + size
+    std::map<std::string, ConstantBufferVariable> constantBufferData; //variable name -> offset + size
 
     ID3D12Resource* constantBuffer = nullptr;
     unsigned char* buffer = nullptr; //gpu-visible memory, mapped once and kept mapped
@@ -72,7 +72,7 @@ public:
         return true;
     }
 
-    //update the whole buffer from a cpu struct (the old way, still handy)
+    //update the whole buffer from a cpu struct
     void update(const void* data, unsigned int sizeInBytes)
     {
         memcpy(cpuData.data(), data, sizeInBytes < dataSizeInBytes ? sizeInBytes : dataSizeInBytes);

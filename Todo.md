@@ -1,9 +1,11 @@
+The full plan is in `aim-trainer-roadmap.md`, this is just the short list.
 
-- **Textures.** You'll need UVs in `Vertex` and the input layout, a descriptor heap with SRVs (shader resource views), a sampler, and a descriptor table in the root signature. Your `uploadResource` already has the `texFootprint` branch for this. Check whether `GEMLoader.h`'s vertex structs carry UVs before you change `Vertex`.
-- **Skeletal animation.** The TRex goes through your `verticesAnimated` path, but you only read position and normal from it. Animating it needs bone indices and weights per vertex, plus a bone matrix array in a constant buffer.
-- **Instancing.** If your game has lots of trees or rocks (the acacia model, for example), drawing many copies in one call with per-instance data saves a lot of draw calls.
-- **Skybox.** 
-- **Tesselation Shader**
-- **Window resize** (resize the swapchain on `WM_SIZE`). It's a nice-to-have, and fine to leave until near the end.
-
-
+- **Shared descriptor heap + root signature tables/samplers.** Needed before textures and the UI font atlas.
+- **Textures.** UVs and tangents in `Vertex` and the input layout, SRVs in the shared heap, mipmaps. `uploadResource` already has the `texFootprint` branch to build on.
+- **UI renderer.** Screen-space quad shader + PSO, font atlas text, then buttons/sliders/checkboxes. Hook a draw function onto each game state.
+- **Scenarios.** `Scenario` base class, then B180, Controlsphere and voxTargetSwitch. Move the placeholder target out of `Game`.
+- **Save best scores** to `scores.txt`.
+- **Vsync toggle** with tearing support, aim trainers want low latency.
+- **Instancing.** For the hit particles.
+- **Skybox.**
+- **Window resize** (resize the swapchain on `WM_SIZE`). Nice to have, fine to leave until near the end.
