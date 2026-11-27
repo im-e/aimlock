@@ -364,3 +364,7 @@ FodyWeavers.xsd
 
 # Compiled shader cache
 *.cso
+
+# aimlock: per-player files, not part of the source
+settings.txt
+scores.txt

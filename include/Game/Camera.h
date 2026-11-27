@@ -3,6 +3,7 @@
 #include "Engine/Maths/Matrix.h"
 #include "Engine/Maths/MathUtils.h"
 #include "Engine/Platform/Window.h"
+#include "Game/Settings.h"
 #include <cmath>
 
 //the player's view in the aim trainer
@@ -14,14 +15,20 @@ public:
     float yaw = 0.0f;   //left/right in radians, 0 = looking down +z
     float pitch = 0.0f; //up/down in radians
 
-    //sensitivity works the same as CS/Apex (0.022 degrees per mouse count at sens 1)
-    //so people can bring their in game sens straight over
-    float sensitivity = 5.0f;
-    float yawPerCount = 0.022f;
+    //copied in from Settings whenever they change
+    float sensitivity = 1.0f;
+    float yawPerCount = 0.022f;   //degrees per mouse count at sens 1 (0.022 = CS/Apex)
+    float horizontalFov = 103.0f; //degrees
 
-    float horizontalFov = 103.0f; //degrees, same as valorant's fixed fov
     float nearPlane = 0.1f;
     float farPlane = 200.0f;
+
+    void applySettings(const Settings& settings)
+    {
+        sensitivity = settings.sensitivity;
+        yawPerCount = settings.yawPerCount();
+        horizontalFov = settings.horizontalFov;
+    }
 
     Vec3 forward() const
     {

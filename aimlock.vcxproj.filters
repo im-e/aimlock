@@ -40,6 +40,12 @@
     <Filter Include="src\Game">
       <UniqueIdentifier>{3f6c2a41-8d1e-4b7a-9c55-2e7b9d10a6f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Game\Scenarios">
+      <UniqueIdentifier>{8b2d6e17-4c3a-4f9e-a1d5-7e60c2b9f483}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Game\Scenarios">
+      <UniqueIdentifier>{c47a19f2-6d85-4e3b-b072-19ad5e8f3c61}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Engine\Platform">
       <UniqueIdentifier>{ed86876d-fbd3-4d04-9b4b-9d24d9f6c9ba}</UniqueIdentifier>
     </Filter>
@@ -53,6 +59,15 @@
     </ClCompile>
     <ClCompile Include="src\Game\Game.cpp">
       <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Settings.cpp">
+      <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\ScoreBoard.cpp">
+      <Filter>src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Scenarios\ControlsphereScenario.cpp">
+      <Filter>src\Game\Scenarios</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Graphics\Mesh.cpp">
       <Filter>src\Engine\Graphics</Filter>
@@ -82,6 +97,18 @@
     </ClInclude>
     <ClInclude Include="include\Game\GameState.h">
       <Filter>include\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game\Settings.h">
+      <Filter>include\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game\ScoreBoard.h">
+      <Filter>include\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game\Scenario.h">
+      <Filter>include\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Game\Scenarios\ControlsphereScenario.h">
+      <Filter>include\Game\Scenarios</Filter>
     </ClInclude>
     <ClInclude Include="include\Engine\Graphics\Check.h">
       <Filter>include\Engine\Graphics</Filter>

@@ -19,6 +19,14 @@ The order is chosen so there's always **something I could hand in**, and each gr
 - **Game state machine started** (`Game`, `GameState`): Main menu → Countdown → Playing → Results, plus Paused. One placeholder target with hitscan (`MathUtils::raySphere`), kills/accuracy, in-memory best score. Until the UI renderer exists the window title shows the current screen
 - Comments and code tidied
 
+**27 Nov (afternoon)**
+- `Scenario` base class (`start`, `update(dt, AimInput)`, `getDrawList`, `score`, `accuracy`, `statsText`). `Game` owns the timer, countdown, pausing and saving, scenarios only own their targets and scoring
+- **Controlsphere** done: one sphere circling 360° around the player, random speed/direction/distance changes eased in, gravity hops. Score = time on target × 100 (6000 perfect, checked with a perfect-tracking test), accuracy = on target / time firing. The sphere lights up while tracked. Hits are tested against last frame's position, since that's what the player saw
+- New states: **ScenarioSelect** between MainMenu and Countdown, **Settings** (from the main menu or pause), **Leaderboard** (from scenario select or results)
+- **DPI + cm/360**: yaw presets (CS2/Apex 0.022, Valorant 0.07, Overwatch 2 0.0066), sens, DPI and FOV, saved to `settings.txt`. DPI only feeds the cm/360 readout, the turning itself still works in raw counts
+- **Scores**: every run appended to `scores.txt` (scenario, score, accuracy, cm/360, date). Leaderboard = top 10 per scenario from that history; results show your rank and "new best". Full board printed to the Output window until the UI can draw it
+- The old placeholder click target is gone, B180 replaces it
+
 ---
 
 ## Where the engine is now
@@ -31,7 +39,8 @@ The order is chosen so there's always **something I could hand in**, and each gr
 | sRGB backbuffer (gamma-correct) | **Off-screen render targets**: only drawing to the backbuffer right now |
 | GEM loading, submeshes, procedural sphere, Blinn-Phong | **UV + tangent in `Vertex`**. GEM already provides `tangent` (Vec4) and `u`, `v` |
 | Raw mouse input, click counter, key edges, cursor pixels | **Own UI renderer** (quads + font atlas + widgets) |
-| Game state machine, hitscan, CS-style sens, horizontal FOV | Scenario classes, saved best scores |
+| State machine (menu, select, settings, leaderboard, countdown, play, pause, results) | B180 and voxTargetSwitch |
+| Scenario base class, Controlsphere, scores.txt leaderboard, settings.txt, cm/360 | Leaderboard/settings drawn with the UI instead of the title bar |
 | | `Present(1, 0)` = vsync on. Aim trainers want low latency, so add a toggle |
 
 Skeletal animation and tessellation were on the Todo, but an aim trainer has no use for them. **Dropped.** Instancing and the skybox stay.
@@ -311,24 +320,21 @@ After the tonemap/composite pass, straight onto the backbuffer, so the UI is nev
 
 ## Phase 2–3: The game (days 4–6)
 
-**Already in (27 Nov):**
-- `GameState` enum + `Game` class: MainMenu → Countdown (3 s) → Playing (60 s) → Results, with Paused on Esc or alt+tab. Pausing doesn't eat into the run timer (`timeLeft` only ticks in Playing)
-- Hitscan through `MathUtils::raySphere` from the camera, every click counted (`leftClicks`)
-- One placeholder target that respawns somewhere in front of the player on hit
-- `RunStats` (shots, hits, accuracy) and an in-memory best
+**Done (27 Nov afternoon):** `Scenario` base class, `ControlsphereScenario`, ScenarioSelect / Settings / Leaderboard states, `scores.txt` with a top 10 leaderboard, DPI and cm/360.
 
 **Still to do:**
-- `Scenario` base class with `B180Scenario`, `ControlsphereScenario` and `VoxTSScenario`. The placeholder target logic in `Game::shoot()` / `spawnTarget()` moves into the scenario, and `RunStats::score()` becomes per-scenario
-- ScenarioSelect state between MainMenu and Countdown, and a Settings state
-- Targets in angle/distance/height around the player; `closestHit` across several targets
-- Best scores in `scores.txt`
+- `B180Scenario` and `VoxTSScenario`: derive from `Scenario`, add a `push_back` in `Game::init`, and they show up in scenario select and get their own leaderboard
+- `closestHit` across several targets (B180 has four, voxTS several), using `AimInput::clicks` so every click this frame is tested
+- Draw the Settings and Leaderboard screens with the UI (rows already exist as `SettingRow` and `ScoreBoard::top`)
 
 **Screens, all built with my UI:**
 
 | Screen | Contents |
 |---|---|
 | Main menu | Title, Play, Settings, Quit buttons |
-| Scenario select | One button per scenario with its best score underneath |
+| Scenario select | One button per scenario with its best score underneath, and a Leaderboard button |
+| Leaderboard | Top 10 table: rank, score, accuracy, cm/360, date. Arrows to switch scenario |
+| Settings | Game (yaw preset), sensitivity, DPI, live cm/360, FOV |
 | Countdown | Big centred 3-2-1 |
 | HUD | Timer (top centre), score, kills, accuracy %, **crosshair** |
 | Pause (Esc) | Resume, sensitivity slider, FOV slider, vsync checkbox, crosshair settings, Quit to menu |
